@@ -3,7 +3,7 @@ public class NoAVL extends No <NoAVL> {
 
     public NoAVL (int chave) {
         super (chave);
-        this.altura = 1;
+        this.altura = 1; //nesse caso é uma folha: subárvore com um único nível
 
     }
 }
