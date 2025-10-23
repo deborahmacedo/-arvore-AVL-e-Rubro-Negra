@@ -71,3 +71,15 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
         // se tiver rotação, o pai do novo nó precisa ser atualizado na recursão
         return no_balanceado; // retorna o nó rebalanceado para a chamada anterior
     }
+
+     private int altura(NoAVL no) {
+        if (no == null) {
+            return 0;
+        } else {
+            return no.altura;
+        }
+     }
+
+    private void novaAltura (NoAVL no) {
+        no.altura = 1 + Math.max(altura(no.esquerdo), altura(no.direito));
+    }
