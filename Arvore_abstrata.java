@@ -41,4 +41,18 @@ public abstract class Arvore_abstrata <N extends No<N>> {
     // Chamar o método de balanceamento após a inserção
     balancear(novo_no);
     }
-}
+
+    public N buscar(int chave) {
+        N atual = raiz;
+        while (atual != null) {
+            if (chave > atual.chave) {
+                atual = atual.direito;
+            } else if (chave < atual.chave) {
+                atual = atual.esquerdo;
+            } else {
+                return atual;
+            }
+        }
+            return null;
+        }
+    }
