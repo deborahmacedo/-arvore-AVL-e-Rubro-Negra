@@ -2,7 +2,7 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
 
     @Override
     public NoRN criar_no(int chave){
-
+        return  new NoRN(chave);
     }
 
     @Override
