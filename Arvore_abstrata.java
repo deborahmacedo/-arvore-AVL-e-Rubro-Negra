@@ -7,7 +7,8 @@ public abstract class Arvore_abstrata <N extends No<N>> {
 
     // Métodos abstratos para serem implementados nas subclasses
     public abstract N criar_no(int chave);
-    public abstract void balancear(N no);
+    public abstract void balancearInsercao(N no);
+    public abstract void balancearRemocao(N no);
 
     // Método de inserção genérico
     public void  inserir(int chave) {

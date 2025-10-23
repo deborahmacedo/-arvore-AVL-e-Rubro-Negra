@@ -6,7 +6,7 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
     }
 
     @Override
-    public void balancear(NoRN no) {
+    public void balancearInsercao(NoRN no){
         if (no.pai == null) {
             no.color = NoRN.PRETO;
             raiz = no;
@@ -56,6 +56,9 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
         this.raiz.color = NoRN.PRETO;
     }
 
+    @Override
+    public void balancearRemocao(NoRN no) {
 
+    }
 
 }
