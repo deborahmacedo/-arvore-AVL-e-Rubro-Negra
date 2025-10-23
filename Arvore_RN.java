@@ -4,6 +4,7 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
     public NoRN criar_no(int chave){
 
     }
+
     @Override
     public void balancear(NoRN no) {
 
