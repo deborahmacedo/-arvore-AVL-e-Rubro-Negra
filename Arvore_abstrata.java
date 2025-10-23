@@ -55,4 +55,61 @@ public abstract class Arvore_abstrata <N extends No<N>> {
         }
             return null;
         }
+
+    // Rotação à esquerda
+    public N rotacao_esquerda(N x) {
+        N y = x.direito;   
+        N T2 = y.esquerdo; 
+
+        // Faz a rotação
+        y.esquerdo = x;
+        x.direito = T2;
+
+        if (T2 != null) {
+            T2.pai = x;
+        }
+
+         // Atualiza os pais
+        if (x.pai != null) {
+            if (x == x.pai.esquerdo)
+                x.pai.esquerdo = y;
+            else
+                x.pai.direito = y;
+        }
+
+        y.pai = x.pai;
+        x.pai = y;
+
+        // Retorna a nova raiz dessa subárvore
+        return y;
+    }
+
+    // Rotação à direita
+    public N rotacao_direita(N y) {
+        N x = y.esquerdo;
+        N T2 = x.direito;  
+
+        // Faz a rotação
+        x.direito = y;
+        y.esquerdo = T2;
+
+        if (T2 != null) {
+            T2.pai = y;
+        }
+
+         // Atualiza os pais
+        if (y.pai != null) {
+            if (y == y.pai.esquerdo)
+                y.pai.esquerdo = x;
+            else
+                y.pai.direito = x;
+        }
+
+        x.pai = y.pai;
+        y.pai = x;
+
+        // Retorna a nova raiz dessa subárvore
+        return x;
+}
+
     }
