@@ -61,4 +61,13 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
 
     }
 
+    @Override
+    protected String getNodeDetails(NoRN no) {
+        // Pega a primeira letra da cor (V para Vermelho, P para Preto)
+        // Usa as constantes que você definiu no NoRN
+        String corLabel = (no.color.equals(NoRN.VERMELHO)) ? "(V)" : "(P)";
+
+        return corLabel + " " + no.chave;
+    }
+
 }
