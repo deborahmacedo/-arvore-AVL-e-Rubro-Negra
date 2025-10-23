@@ -12,7 +12,7 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
         balancear(novono);
         return novono;
     }
-    // recursividade para remover 
+    // recursividade para remover
     private NoAVL remover(NoAVL no, int chave){
         if (no == null) {
             return null; // nó não encontrado
@@ -80,12 +80,12 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
         }
      }
 
-    // calcula altura do nó 
+    // calcula altura do nó
     private void novaAltura (NoAVL no) {
-        no.altura = 1 + Math.max(altura(no.esquerdo), altura(no.direito)); // retorna o maior valor entre a altura do filho esquerdo e a altura do filho direito. 
+        no.altura = 1 + Math.max(altura(no.esquerdo), altura(no.direito)); // retorna o maior valor entre a altura do filho esquerdo e a altura do filho direito.
         //maior valor = caminho mais longo  a partir do nó, e adiciona mais 1, pois o nó pai tá um nível acima
     }
-    
+
  private int fatordeBalanceamento(NoAVL no) { // cálculo do balanceamento da AVL
         if (no == null) {
             return 0;
@@ -94,7 +94,7 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
         }
     }
 
-    // balancear arvore 
+    // balancear arvore
     private NoAVL balancearNo(NoAVL no) {
         if (no == null) return null; // se o nó for vazio, retorna vazio
 
@@ -138,13 +138,13 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
     // chama a função balancearNo para balancear para inserir
     @Override
     public void balancear(NoAVL no) {
-        while (no != null) { // percorre enquanto o nó nao for vazio 
-            NoAVL novo = balancearNo(no); // balanceia o nó atual 
+        while (no != null) { // percorre enquanto o nó nao for vazio
+            NoAVL novo = balancearNo(no); // balanceia o nó atual
 
             // atualiza a raiz se a rotação a alterou
-            if (novo.pai == null) 
+            if (novo.pai == null)
                 raiz = novo;
-            no = novo.pai; // sobe para o pai 
+            no = novo.pai; // sobe para o pai
 
         }
     }

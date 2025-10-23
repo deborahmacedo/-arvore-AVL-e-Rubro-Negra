@@ -62,13 +62,13 @@ public class Main {
         System.out.println("Bem vindo ao Sistema de Árvores\n");
         //System.out.println("Selecione uma opção: \n");
         System.out.println("Selecione o tipo de árvore desejada\n");
-        System.out.println("0. Sair \n 1. Árvore AVL \n 2.Árvore Rubro Negro\n ");
+        System.out.println("\n0. Sair \n 1. Árvore AVL \n 2.Árvore Rubro Negro\n ");
 
     }
     public static void printMenuArvores(){
         System.out.println("----Árvore----\n");
         System.out.println("Selecione uma opção: \n");
-        System.out.println("0.Sair \n 1.Inserir \n 2.Remover\n 3.Buscar\n 4.Printar árvore\n");
+        System.out.println("\n0.Sair \n 1.Inserir \n 2.Remover\n 3.Buscar\n 4.Printar árvore\n");
 
     }
 

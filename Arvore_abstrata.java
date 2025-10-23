@@ -44,6 +44,7 @@ public abstract class Arvore_abstrata <N extends No<N>> {
     }
 
     public N buscar(int chave) {
+        System.out.println("\n Procurando pela chave: " + chave);
         N atual = raiz;
         while (atual != null) {
             if (chave > atual.chave) {
@@ -51,9 +52,11 @@ public abstract class Arvore_abstrata <N extends No<N>> {
             } else if (chave < atual.chave) {
                 atual = atual.esquerdo;
             } else {
+                System.out.println("Chave: " + chave + " ENCONTRADA!");
                 return atual;
             }
         }
+        System.out.println("Chave: " + chave + " NÃO ENCONTRADA.");
             return null;
         }
 
