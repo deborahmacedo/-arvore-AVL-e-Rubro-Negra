@@ -134,3 +134,18 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
 
         return no; // retorna o nó agora balanceado
     }
+
+    // chama a função balancearNo para balancear para inserir
+    @Override
+    public void balancear(NoAVL no) {
+        while (no != null) { // percorre enquanto o nó nao for vazio 
+            NoAVL novo = balancearNo(no); // balanceia o nó atual 
+
+            // atualiza a raiz se a rotação a alterou
+            if (novo.pai == null) 
+                raiz = novo;
+            no = novo.pai; // sobe para o pai 
+
+        }
+    }
+}
