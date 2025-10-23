@@ -83,3 +83,11 @@ public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
     private void novaAltura (NoAVL no) {
         no.altura = 1 + Math.max(altura(no.esquerdo), altura(no.direito));
     }
+    
+ private int fatordeBalanceamento(NoAVL no) { // cálculo do balanceamento da AVL
+        if (no == null) {
+            return 0;
+        } else {
+            return altura(no.esquerdo) - altura(no.direito);
+        }
+    }
