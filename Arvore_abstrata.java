@@ -8,15 +8,14 @@ public abstract class Arvore_abstrata <N extends No<N>> {
     // Métodos abstratos para serem implementados nas subclasses
     public abstract N criar_no(int chave);
     public abstract void balancearInsercao(N no);
-    public abstract void balancearRemocao(N no);
+    public abstract N balancearRemocao(N no);
 
-    // Método de inserção genérico (CORRIGIDO)
+    // Método de inserção genérico
     public void inserir(int chave) {
         N novo_no = criar_no(chave);
 
         if (raiz == null) {
             raiz = novo_no;
-            // NÃO HÁ 'return' AQUI.
         } else {
             N atual = raiz;
             N pai = null;
@@ -28,7 +27,7 @@ public abstract class Arvore_abstrata <N extends No<N>> {
                     atual = atual.direito;
                 } else {
                     System.out.println("Chave já existe na árvore.");
-                    return; // Chave duplicada, sai.
+                    return;
                 }
             }
 
@@ -44,19 +43,37 @@ public abstract class Arvore_abstrata <N extends No<N>> {
         balancearInsercao(novo_no);
     }
 
-    // encontrar o nó de menor valor
-    private NoAVL menorNo(NoAVL no) {
+
+    // REMOÇÃO GENÉRICA
+
+    // encontrar o nó de menor valor (corrigido para tipo genérico N)
+    private N menorNo(N no) {
         while (no.esquerdo != null){
             no = no.esquerdo;
         }
         return no;
     }
-    private NoAVL remover(NoAVL no, int chave){
+
+    //  iniciar a remoção
+    public void remover(int chave) {
+        // A raiz é atualizada com o resultado da remoção recursiva
+        this.raiz = remover(this.raiz, chave);
+        // Garante que se a árvore ficar vazia (raiz == null), o pai da raiz continua null (não é estritamente necessário, mas boa prática)
+        if (this.raiz != null) {
+            this.raiz.pai = null;
+        }
+
+    }
+
+
+    // recursivo de remoção
+    private N remover(N no, int chave) {
         if (no == null) {
             return null; // nó não encontrado
         }
 
         if (chave < no.chave) {
+
             no.esquerdo = remover(no.esquerdo, chave);
             if (no.esquerdo != null) {
                 no.esquerdo.pai = no; // atualiza o pai
@@ -72,7 +89,7 @@ public abstract class Arvore_abstrata <N extends No<N>> {
             // se encontrou o nó
             if (no.esquerdo == null || no.direito == null) { // caso 0 ou 1 filho
 
-                NoAVL filho = null;
+                N filho = null; //
 
                 // decide qual filho, caso diferente de vazio, deve substituir o nó removido
                 if (no.esquerdo != null) {
@@ -86,11 +103,13 @@ public abstract class Arvore_abstrata <N extends No<N>> {
                     filho.pai = no.pai;
                 }
 
+
+                // O balanceamento ocorrerá na volta da recursão, para o pai do nó removido.
                 return filho; // retorna o filho como novo nó no lugar do removido
 
             } else {
                 // caso com DOIS FILHOS
-                NoAVL sucessor = menorNo(no.direito);
+                N sucessor = menorNo(no.direito);
                 no.chave = sucessor.chave; // substitui pelo sucessor
 
                 // remove o sucessor e atualiza a subárvore direita do nó atual (que mudou de chave)
@@ -102,13 +121,12 @@ public abstract class Arvore_abstrata <N extends No<N>> {
             }
         }
 
-        // se tiver rotação, o pai do novo nó precisa ser atualizado na recursão
-       // return no_balanceado; // retorna o nó rebalanceado para a chamada anterior
-        return no; //MUDAR DE VOLTA DEPOIS
+        // CHAMA O BALANCEAMENTO APÓS A REMOÇÃO (para o nó atual e seus ancestrais)
+        // o método balancear retorna o nó que se torna a nova raiz dessa sub-árvore
+        return balancearRemocao(no);
     }
 
-    // chama o balanceamento depois da remoção (para o nó atual e seus ancestrais)
-        //NoAVL no_balanceado = balancear(No);
+
 
     public N buscar(int chave) {
         System.out.println("\n Procurando pela chave: " + chave);
@@ -127,65 +145,8 @@ public abstract class Arvore_abstrata <N extends No<N>> {
             return null;
         }
 
+
     // Rotação à esquerda
-//    public N rotacao_esquerda(N x) {
-//        N y = x.direito;
-//        N T2 = y.esquerdo;
-//
-//        // Faz a rotação
-//        y.esquerdo = x;
-//        x.direito = T2;
-//
-//        if (T2 != null) {
-//            T2.pai = x;
-//        }
-//
-//         // Atualiza os pais
-//        if (x.pai != null) {
-//            if (x == x.pai.esquerdo)
-//                x.pai.esquerdo = y;
-//            else
-//                x.pai.direito = y;
-//        }
-//
-//        y.pai = x.pai;
-//        x.pai = y;
-//
-//        // Retorna a nova raiz dessa subárvore
-//        return y;
-//    }
-//
-//    // Rotação à direita
-//    public N rotacao_direita(N y) {
-//        N x = y.esquerdo;
-//        N T2 = x.direito;
-//
-//        // Faz a rotação
-//        x.direito = y;
-//        y.esquerdo = T2;
-//
-//        if (T2 != null) {
-//            T2.pai = y;
-//        }
-//
-//         // Atualiza os pais
-//        if (y.pai != null) {
-//            if (y == y.pai.esquerdo)
-//                y.pai.esquerdo = x;
-//            else
-//                y.pai.direito = x;
-//        }
-//
-//        x.pai = y.pai;
-//        y.pai = x;
-//
-//        // Retorna a nova raiz dessa subárvore
-//        return x;
-//}
-
-    // Em Arvore_abstrata
-
-    // Rotação à esquerda (CORRIGIDA e como void)
     public void rotacao_esquerda(N x) {
         N y = x.direito;
         N T2 = y.esquerdo;
@@ -248,9 +209,7 @@ public abstract class Arvore_abstrata <N extends No<N>> {
     }
     // Dentro de Arvore_abstrata
 
-    /**
-     * Método público que inicia a impressão da árvore.
-     */
+
     public void printar() {
         // Verifica se a raiz é 'null', pois sua implementação usa 'null'
         if (this.raiz == null) {
@@ -260,11 +219,9 @@ public abstract class Arvore_abstrata <N extends No<N>> {
 
         StringBuilder sb = new StringBuilder();
 
-        // Chama o método recursivo auxiliar para construir a string
         // A raiz não tem "padding" (preenchimento) nem "pointer" (ponteiro)
         printarHelper(sb, "", "", this.raiz);
 
-        // Imprime o resultado final
         System.out.println(sb.toString());
     }
 

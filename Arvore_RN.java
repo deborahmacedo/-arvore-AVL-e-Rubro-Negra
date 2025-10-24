@@ -57,7 +57,7 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
     }
 
     @Override
-    public void balancearRemocao(NoRN no) {
+    public NoRN balancearRemocao(NoRN no) {
 
     }
 
@@ -70,4 +70,18 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
         return corLabel + " " + no.chave;
     }
 
+
+    private String getColor(NoRN no) {
+        if(no == null){
+            return NoRN.PRETO;
+        }
+        return no.color;
+    }
+
+    private String getCor(NoRN no) {
+        if (no == null) {
+            return NoRN.PRETO;
+        }
+        return no.color;
+    }
 }
