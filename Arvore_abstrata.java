@@ -40,7 +40,7 @@ public abstract class Arvore_abstrata <N extends No<N>> {
     }
 
     // Chamar o método de balanceamento após a inserção
-    balancear(novo_no);
+    balancearInsercao(novo_no);
     }
 
     public N buscar(int chave) {
