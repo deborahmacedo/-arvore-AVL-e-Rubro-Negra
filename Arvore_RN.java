@@ -30,9 +30,9 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
                         no = pai;
                         rotacao_esquerda(no);
                     }
-                    pai.color = NoRN.PRETO;
-                    avo.color = NoRN.VERMELHO;
-                    rotacao_direita(avo);
+                    no.pai.color = NoRN.PRETO;
+                    no.pai.pai.color = NoRN.VERMELHO;
+                    rotacao_direita(no.pai.pai);
                 }
             } else {
                 NoRN tio = avo.esquerdo;
@@ -47,9 +47,9 @@ public class Arvore_RN extends Arvore_abstrata<NoRN>{
                         no = pai;
                         rotacao_direita(no);
                     }
-                    pai.color = NoRN.PRETO;
-                    avo.color = NoRN.VERMELHO;
-                    rotacao_esquerda(avo);
+                    no.pai.color = NoRN.PRETO;
+                    no.pai.pai.color = NoRN.VERMELHO;
+                    rotacao_esquerda(no.pai.pai);
                 }
             }
         }
