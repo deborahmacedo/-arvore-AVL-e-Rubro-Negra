@@ -325,69 +325,105 @@ public abstract class Arvore_abstrata <N extends No<N>> {
 
 
     public void printar() {
-        // Verifica se a raiz é 'null', pois sua implementação usa 'null'
+
+// Verifica se a raiz é 'null', pois sua implementação usa 'null'
+
         if (this.raiz == null) {
+
             System.out.println("Árvore está vazia.");
+
             return;
+
         }
+
+
 
         StringBuilder sb = new StringBuilder();
 
-        // A raiz não tem "padding" (preenchimento) nem "pointer" (ponteiro)
+
+
+// A raiz não tem "padding" (preenchimento) nem "pointer" (ponteiro)
+
         printarHelper(sb, "", "", this.raiz);
 
+
+
         System.out.println(sb.toString());
+
     }
 
+
+
     /**
+
      * Método recursivo auxiliar (Pré-Ordem) que constrói a string da árvore.
+
      *
+
      * @param sb O StringBuilder para construir a string
-     * @param padding O preenchimento ("|   " ou "    ") vindo dos pais
+
+     * @param padding O preenchimento ("| " ou " ") vindo dos pais
+
      * @param pointer O ponteiro ("|--" ou "`-- ") para o nó atual
+
      * @param no O nó atual
+
      */
+
     private void printarHelper(StringBuilder sb, String padding, String pointer, N no) {
-        // Condição de parada: sua implementação usa 'null'
         if (no == null) {
             return;
         }
 
-        // 1. Adiciona a linha do nó ATUAL
+        // 1. Adiciona a linha do nó ATUAL (Correto)
         sb.append(padding);
         sb.append(pointer);
-        sb.append(getNodeDetails(no)); // <-- Pega os detalhes (chave, cor, etc.)
+        sb.append(getNodeDetails(no));
         sb.append("\n");
 
         // 2. Prepara o 'padding' (preenchimento) para os FILHOS
-        // Se o nó atual é um galho (|--), seus filhos continuam o galho na vertical (|   ).
-        // Se o nó atual é o último (`--), seus filhos recebem apenas espaço (    ).
-        String novoPadding = padding + (pointer.equals("|-- ") ? "|   " : "    ");
+        // *** AQUI ESTÁ A CORREÇÃO ***
 
-        // 3. Define os ponteiros para os FILHOS
+        String novoPadding;
+        if (pointer.equals("|-- ")) {
+            // Se o nó atual é um galho, os filhos continuam a linha vertical
+            novoPadding = padding + "|   ";
+        } else if (pointer.equals("`-- ")) {
+            // Se o nó atual é o último, os filhos recebem espaço
+            novoPadding = padding + "    ";
+        } else {
+            // Caso especial do ROOT, onde o 'pointer' é ""
+            // Os filhos do root não devem ter 'padding' inicial.
+            novoPadding = "";
+        }
 
-        // O filho da ESQUERDA:
-        // - Se houver um filho direito, o esquerdo usa "|-- " (não é o último)
-        // - Se NÃO houver um filho direito, o esquerdo usa "`-- " (é o último)
+
+        // 3. Define os ponteiros para os FILHOS (Estava 100% correto)
         String pointerEsq = (no.direito != null) ? "|-- " : "`-- ";
-
-        // O filho da DIREITA:
-        // - É sempre o último, então usa "`-- "
         String pointerDir = "`-- ";
 
-        // 4. Chama a recursão (Nó, Esquerda, Direita)
+        // 4. Chama a recursão (Correto)
         printarHelper(sb, novoPadding, pointerEsq, no.esquerdo);
         printarHelper(sb, novoPadding, pointerDir, no.direito);
     }
 
-    /**
-     * Método protegido que fornece os detalhes do nó.
-     * As subclasses (como Arvore_RN) podem sobrescrever isso.
-     * A implementação padrão mostra apenas a chave.
-     */
-    protected String getNodeDetails(N no) {
-        // Converte a chave (int) para String
-        return String.valueOf(no.chave);
-    }
 
+
+    /**
+
+     * Método protegido que fornece os detalhes do nó.
+
+     * As subclasses (como Arvore_RN) podem sobrescrever isso.
+
+     * A implementação padrão mostra apenas a chave.
+
+     */
+
+    protected String getNodeDetails(N no) {
+
+// Converte a chave (int) para String
+
+        return String.valueOf(no.chave);
+
+    }
     }
