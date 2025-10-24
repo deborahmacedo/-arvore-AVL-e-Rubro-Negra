@@ -150,62 +150,140 @@ public abstract class Arvore_abstrata <N extends No<N>> {
         return null;
     }
 
-    // Rotação à esquerda
-    public N rotacao_esquerda(N x) {
-       
+   // Rotação à esquerda (CORRIGIDA e como void)
+    public void rotacao_esquerda(N x) {
         N y = x.direito;
         N T2 = y.esquerdo;
 
-        // Faz a rotação
+        // 1. Faz a rotação
         y.esquerdo = x;
         x.direito = T2;
 
+        // 2. Atualiza o pai de T2 (se ele existir)
         if (T2 != null) {
             T2.pai = x;
         }
 
-        // Atualiza os pais
-        if (x.pai != null) {
+        // 3. Atualiza os pais de x e y (A PARTE CRÍTICA)
+        y.pai = x.pai; // O pai de y se torna o antigo pai de x
+
+        if (x.pai == null) {
+            // Se x ERA a raiz, y AGORA é a raiz
+            this.raiz = y;
+        } else {
+            // Se x NÃO era a raiz, liga o pai de x a y
             if (x == x.pai.esquerdo)
                 x.pai.esquerdo = y;
             else
                 x.pai.direito = y;
         }
 
-        y.pai = x.pai;
-        x.pai = y;
-
-        // Retorna a nova raiz dessa subárvore
-        return y;
+        x.pai = y; // O pai de x agora é y
     }
 
-    // Rotação à direita
-    public N rotacao_direita(N y) {
-        
+    // Rotação à direita (CORRIGIDA e como void)
+    public void rotacao_direita(N y) {
         N x = y.esquerdo;
         N T2 = x.direito;
 
-        // Faz a rotação
+        // 1. Faz a rotação
         x.direito = y;
         y.esquerdo = T2;
 
+        // 2. Atualiza o pai de T2 (se ele existir)
         if (T2 != null) {
             T2.pai = y;
         }
 
-        // Atualiza os pais
-        if (y.pai != null) {
+        // 3. Atualiza os pais de x e y (A PARTE CRÍTICA)
+        x.pai = y.pai; // O pai de x se torna o antigo pai de y
+
+        if (y.pai == null) {
+            // Se y ERA a raiz, x AGORA é a raiz
+            this.raiz = x;
+        } else {
+            // Se y NÃO era a raiz, liga o pai de y a x
             if (y == y.pai.esquerdo)
                 y.pai.esquerdo = x;
             else
                 y.pai.direito = x;
         }
 
-        x.pai = y.pai;
-        y.pai = x;
+        y.pai = x; // O pai de y agora é x
+    }
+    // Dentro de Arvore_abstrata
 
-        // Retorna a nova raiz dessa subárvore
-        return x;
+    /**
+     * Método público que inicia a impressão da árvore.
+     */
+    public void printar() {
+        // Verifica se a raiz é 'null', pois sua implementação usa 'null'
+        if (this.raiz == null) {
+            System.out.println("Árvore está vazia.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        // Chama o método recursivo auxiliar para construir a string
+        // A raiz não tem "padding" (preenchimento) nem "pointer" (ponteiro)
+        printarHelper(sb, "", "", this.raiz);
+
+        // Imprime o resultado final
+        System.out.println(sb.toString());
+    }
+
+    /**
+     * Método recursivo auxiliar (Pré-Ordem) que constrói a string da árvore.
+     *
+     * @param sb O StringBuilder para construir a string
+     * @param padding O preenchimento ("|   " ou "    ") vindo dos pais
+     * @param pointer O ponteiro ("|--" ou "`-- ") para o nó atual
+     * @param no O nó atual
+     */
+    private void printarHelper(StringBuilder sb, String padding, String pointer, N no) {
+        // Condição de parada: sua implementação usa 'null'
+        if (no == null) {
+            return;
+        }
+
+        // 1. Adiciona a linha do nó ATUAL
+        sb.append(padding);
+        sb.append(pointer);
+        sb.append(getNodeDetails(no)); // <-- Pega os detalhes (chave, cor, etc.)
+        sb.append("\n");
+
+        // 2. Prepara o 'padding' (preenchimento) para os FILHOS
+        // Se o nó atual é um galho (|--), seus filhos continuam o galho na vertical (|   ).
+        // Se o nó atual é o último (`--), seus filhos recebem apenas espaço (    ).
+        String novoPadding = padding + (pointer.equals("|-- ") ? "|   " : "    ");
+
+        // 3. Define os ponteiros para os FILHOS
+
+        // O filho da ESQUERDA:
+        // - Se houver um filho direito, o esquerdo usa "|-- " (não é o último)
+        // - Se NÃO houver um filho direito, o esquerdo usa "`-- " (é o último)
+        String pointerEsq = (no.direito != null) ? "|-- " : "`-- ";
+
+        // O filho da DIREITA:
+        // - É sempre o último, então usa "`-- "
+        String pointerDir = "`-- ";
+
+        // 4. Chama a recursão (Nó, Esquerda, Direita)
+        printarHelper(sb, novoPadding, pointerEsq, no.esquerdo);
+        printarHelper(sb, novoPadding, pointerDir, no.direito);
+    }
+
+    /**
+     * Método protegido que fornece os detalhes do nó.
+     * As subclasses (como Arvore_RN) podem sobrescrever isso.
+     * A implementação padrão mostra apenas a chave.
+     */
+    protected String getNodeDetails(N no) {
+        // Converte a chave (int) para String
+        return String.valueOf(no.chave);
+    }
+
     }
 
     // chama a função balancearNo para balancear para inserir
