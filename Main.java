@@ -38,7 +38,7 @@ public class Main {
                     break;
                 case 2:  //remover
                     chave = leitor.nextInt();
-                    arvore.inserir(chave);
+                    arvore.remover(chave);
                     break;
                 case 3:  //buscar
                     chave = leitor.nextInt();
