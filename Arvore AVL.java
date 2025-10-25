@@ -1,4 +1,4 @@
-blic class ArvoreAVL extends Arvore_abstrata<NoAVL> {
+public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
 
     @Override
     // criar nó
