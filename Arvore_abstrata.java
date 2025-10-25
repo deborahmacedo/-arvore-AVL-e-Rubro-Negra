@@ -291,7 +291,6 @@ public abstract class Arvore_abstrata <N extends No<N>> {
         x.pai = y; // O pai de x agora é y
     }
 
-    // Rotação à direita (CORRIGIDA e como void)
     public void rotacao_direita(N y) {
         N x = y.esquerdo;
         N T2 = x.direito;
