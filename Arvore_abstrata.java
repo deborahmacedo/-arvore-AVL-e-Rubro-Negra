@@ -375,39 +375,48 @@ public abstract class Arvore_abstrata <N extends No<N>> {
             return;
         }
 
-        // 1. Adiciona a linha do nó ATUAL (Correto)
+        // 1. Adiciona a linha do nó ATUAL (Sem alteração)
         sb.append(padding);
         sb.append(pointer);
         sb.append(getNodeDetails(no));
         sb.append("\n");
 
-        // 2. Prepara o 'padding' (preenchimento) para os FILHOS
-        // *** AQUI ESTÁ A CORREÇÃO ***
-
+        // 2. Prepara o 'padding' (preenchimento) para os FILHOS (Sem alteração)
         String novoPadding;
         if (pointer.equals("|-- ")) {
-            // Se o nó atual é um galho, os filhos continuam a linha vertical
             novoPadding = padding + "|   ";
         } else if (pointer.equals("`-- ")) {
-            // Se o nó atual é o último, os filhos recebem espaço
             novoPadding = padding + "    ";
         } else {
-            // Caso especial do ROOT, onde o 'pointer' é ""
-            // Os filhos do root não devem ter 'padding' inicial.
+            // Caso especial da Raiz (pointer == "")
             novoPadding = "";
         }
 
+        // ==========================================================
+        // INÍCIO DA ALTERAÇÃO
+        // ==========================================================
 
-        // 3. Define os ponteiros para os FILHOS (Estava 100% correto)
-        String pointerEsq = (no.direito != null) ? "|-- " : "`-- ";
-        String pointerDir = "`-- ";
+        // 3. Define os ponteiros para os FILHOS (Lógica Invertida)
 
-        // 4. Chama a recursão (Correto)
-        printarHelper(sb, novoPadding, pointerEsq, no.esquerdo);
+        // O filho da DIREITA (maior) agora é o primeiro.
+        // Ele recebe "|-- " APENAS SE o filho da ESQUERDA (menor) também existir.
+        String pointerDir = (no.esquerdo != null) ? "|-- " : "`-- ";
+
+        // O filho da ESQUERDA (menor) agora é o último. Ele SEMPRE recebe "`-- ".
+        String pointerEsq = "`-- ";
+
+        // 4. Chama a recursão (Ordem Invertida)
+
+        // Primeiro, chama recursivamente para a DIREITA (maiores)
         printarHelper(sb, novoPadding, pointerDir, no.direito);
+
+        // Por último, chama recursivamente para a ESQUERDA (menores)
+        printarHelper(sb, novoPadding, pointerEsq, no.esquerdo);
+
+        // ==========================================================
+        // FIM DA ALTERAÇÃO
+        // ==========================================================
     }
-
-
 
     /**
 

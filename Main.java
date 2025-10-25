@@ -13,7 +13,7 @@ public class Main {
             case 0:
                 return;
             case 1:
-                //arvore = new ArvoreAVL();
+                arvore = new ArvoreAVL();
                 break;
             case 2:
                 arvore = new Arvore_RN();
