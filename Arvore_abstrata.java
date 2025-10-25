@@ -324,69 +324,114 @@ public abstract class Arvore_abstrata <N extends No<N>> {
 
 
     public void printar() {
-        // Verifica se a raiz é 'null', pois sua implementação usa 'null'
+
+// Verifica se a raiz é 'null', pois sua implementação usa 'null'
+
         if (this.raiz == null) {
+
             System.out.println("Árvore está vazia.");
+
             return;
+
         }
+
+
 
         StringBuilder sb = new StringBuilder();
 
-        // A raiz não tem "padding" (preenchimento) nem "pointer" (ponteiro)
+
+
+// A raiz não tem "padding" (preenchimento) nem "pointer" (ponteiro)
+
         printarHelper(sb, "", "", this.raiz);
 
+
+
         System.out.println(sb.toString());
+
     }
 
+
+
     /**
+
      * Método recursivo auxiliar (Pré-Ordem) que constrói a string da árvore.
+
      *
+
      * @param sb O StringBuilder para construir a string
-     * @param padding O preenchimento ("|   " ou "    ") vindo dos pais
+
+     * @param padding O preenchimento ("| " ou " ") vindo dos pais
+
      * @param pointer O ponteiro ("|--" ou "`-- ") para o nó atual
+
      * @param no O nó atual
+
      */
+
     private void printarHelper(StringBuilder sb, String padding, String pointer, N no) {
-        // Condição de parada: sua implementação usa 'null'
         if (no == null) {
             return;
         }
 
-        // 1. Adiciona a linha do nó ATUAL
+        // 1. Adiciona a linha do nó ATUAL (Sem alteração)
         sb.append(padding);
         sb.append(pointer);
-        sb.append(getNodeDetails(no)); // <-- Pega os detalhes (chave, cor, etc.)
+        sb.append(getNodeDetails(no));
         sb.append("\n");
 
-        // 2. Prepara o 'padding' (preenchimento) para os FILHOS
-        // Se o nó atual é um galho (|--), seus filhos continuam o galho na vertical (|   ).
-        // Se o nó atual é o último (`--), seus filhos recebem apenas espaço (    ).
-        String novoPadding = padding + (pointer.equals("|-- ") ? "|   " : "    ");
+        // 2. Prepara o 'padding' (preenchimento) para os FILHOS (Sem alteração)
+        String novoPadding;
+        if (pointer.equals("|-- ")) {
+            novoPadding = padding + "|   ";
+        } else if (pointer.equals("`-- ")) {
+            novoPadding = padding + "    ";
+        } else {
+            // Caso especial da Raiz (pointer == "")
+            novoPadding = "";
+        }
 
-        // 3. Define os ponteiros para os FILHOS
+        // ==========================================================
+        // INÍCIO DA ALTERAÇÃO
+        // ==========================================================
 
-        // O filho da ESQUERDA:
-        // - Se houver um filho direito, o esquerdo usa "|-- " (não é o último)
-        // - Se NÃO houver um filho direito, o esquerdo usa "`-- " (é o último)
-        String pointerEsq = (no.direito != null) ? "|-- " : "`-- ";
+        // 3. Define os ponteiros para os FILHOS (Lógica Invertida)
 
-        // O filho da DIREITA:
-        // - É sempre o último, então usa "`-- "
-        String pointerDir = "`-- ";
+        // O filho da DIREITA (maior) agora é o primeiro.
+        // Ele recebe "|-- " APENAS SE o filho da ESQUERDA (menor) também existir.
+        String pointerDir = (no.esquerdo != null) ? "|-- " : "`-- ";
 
-        // 4. Chama a recursão (Nó, Esquerda, Direita)
-        printarHelper(sb, novoPadding, pointerEsq, no.esquerdo);
+        // O filho da ESQUERDA (menor) agora é o último. Ele SEMPRE recebe "`-- ".
+        String pointerEsq = "`-- ";
+
+        // 4. Chama a recursão (Ordem Invertida)
+
+        // Primeiro, chama recursivamente para a DIREITA (maiores)
         printarHelper(sb, novoPadding, pointerDir, no.direito);
+
+        // Por último, chama recursivamente para a ESQUERDA (menores)
+        printarHelper(sb, novoPadding, pointerEsq, no.esquerdo);
+
+        // ==========================================================
+        // FIM DA ALTERAÇÃO
+        // ==========================================================
     }
 
     /**
-     * Método protegido que fornece os detalhes do nó.
-     * As subclasses (como Arvore_RN) podem sobrescrever isso.
-     * A implementação padrão mostra apenas a chave.
-     */
-    protected String getNodeDetails(N no) {
-        // Converte a chave (int) para String
-        return String.valueOf(no.chave);
-    }
 
+     * Método protegido que fornece os detalhes do nó.
+
+     * As subclasses (como Arvore_RN) podem sobrescrever isso.
+
+     * A implementação padrão mostra apenas a chave.
+
+     */
+
+    protected String getNodeDetails(N no) {
+
+// Converte a chave (int) para String
+
+        return String.valueOf(no.chave);
+
+    }
     }
