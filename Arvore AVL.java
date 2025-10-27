@@ -1,115 +1,242 @@
+/**
+ * Classe ArvoreAVL.
+ * * Herda de Arvore_abstrata e implementa a lógica de auto-balanceamento
+ * específica da AVL, baseada no Fator de Balanceamento (FB) e alturas.
+ * * NÃO implementa 'inserir', 'rotacao_esquerda', 'rotacao_direita', 'buscar', 'printar',
+ * pois estes são herdados da classe-pai.
+ */
 public class ArvoreAVL extends Arvore_abstrata<NoAVL> {
 
+    // ========================================================================
+    // MÉTODOS ABSTRATOS IMPLEMENTADOS
+    // ========================================================================
+
+    /**
+     * Cria um novo nó do tipo NoAVL.
+     * (Implementação do método abstrato)
+     */
     @Override
-    // criar nó
     public NoAVL criar_no(int chave) {
         return new NoAVL(chave);
     }
 
+    /**
+     * Inicia o processo de balanceamento após uma INSERÇÃO.
+     * (Implementação do método abstrato)
+     * * @param no O nó recém-inserido.
+     */
     @Override
-    public NoAVL balancearInsercao(NoAVL no) {
-        return null;
+    public void balancearInsercao(NoAVL no) {
+        // O balanceamento de inserção começa no nó inserido e sobe
+        rebalancearParaCima(no);
     }
 
+    /**
+     * Inicia o processo de balanceamento após uma REMOÇÃO.
+     * (Implementação do método abstrato)
+     * * @param noSubstituto O nó que substituiu o nó fisicamente removido (pode ser null).
+     * @param pai O pai do nó fisicamente removido, de onde o rebalanceamento começa.
+     */
     @Override
-    public NoAVL balancearRemocao(NoAVL no) {
-        return null;
+    public void balancearRemocao(NoAVL noSubstituto, NoAVL pai) {
+        // O balanceamento de remoção começa no PAI do nó que foi
+        // fisicamente removido e sobe.
+        rebalancearParaCima(pai);
     }
 
+    /**
+     * Remove um nó com a chave especificada e inicia o rebalanceamento.
+     * (Implementação do método abstrato)
+     */
+    @Override
+    public void remover(int chave) {
+        NoAVL noRemover = buscar(chave); // Usa o 'buscar' da classe-pai
+        if (noRemover == null) {
+            System.out.println("Chave: " + chave + " não encontrada para remoção.");
+            return;
+        }
 
-    private int altura(NoAVL no) {
-        if (no == null) {
-            return 0;
-        } else {
-            // NoAVL tem o campo altura
-            return no.altura;
+        NoAVL pai;
+        NoAVL noSubstituto;
+
+        // --- Lógica de Remoção Padrão (BST) ---
+
+        // CASO 1 ou 2: Nó tem 0 ou 1 filho
+        if (noRemover.esquerdo == null || noRemover.direito == null) {
+            pai = noRemover.pai;
+            noSubstituto = (noRemover.esquerdo != null) ? noRemover.esquerdo : noRemover.direito;
+
+            // Se 'noRemover' é a raiz
+            if (pai == null) {
+                this.raiz = noSubstituto;
+            } else {
+                // Liga o pai ao substituto
+                if (noRemover == pai.esquerdo) {
+                    pai.esquerdo = noSubstituto;
+                } else {
+                    pai.direito = noSubstituto;
+                }
+            }
+
+            // Liga o substituto ao pai
+            if (noSubstituto != null) {
+                noSubstituto.pai = pai;
+            }
+
+            // Inicia o balanceamento a partir do PAI do nó removido
+            balancearRemocao(noSubstituto, pai);
+
+        }
+        // CASO 3: Nó tem 2 filhos
+        else {
+            // Encontra o sucessor (menor nó da subárvore direita)
+            NoAVL sucessor = menorNo(noRemover.direito);
+
+            // O 'pai' de onde começará o balanceamento é o pai do sucessor
+            pai = sucessor.pai;
+            // O 'substituto' do sucessor é o filho direito do sucessor
+            noSubstituto = sucessor.direito;
+
+            // Copia a chave do sucessor para o nó que queríamos remover
+            noRemover.chave = sucessor.chave;
+
+            // Remove o sucessor (que tem 0 ou 1 filho à direita)
+            if (sucessor == pai.esquerdo) {
+                pai.esquerdo = noSubstituto;
+            } else {
+                pai.direito = noSubstituto;
+            }
+
+            if (noSubstituto != null) {
+                noSubstituto.pai = pai;
+            }
+
+            // Inicia o balanceamento a partir do PAI do sucessor
+            balancearRemocao(noSubstituto, pai);
         }
     }
 
-    private void novaAltura(NoAVL no) {
-        no.altura = 1 + Math.max(altura(no.esquerdo), altura(no.direito));
+
+    // ========================================================================
+    // MÉTODOS AUXILIARES (LÓGICA AVL)
+    // ========================================================================
+
+    // Retorna a altura de um nó. Um nó nulo tem altura 0.
+    private int altura(NoAVL no) {
+        if (no == null) {
+            return 0; // Consistente com altura = 1 para novas folhas
+        }
+        return no.altura;
     }
 
+    // Recalcula e atualiza a altura de um nó baseado na altura dos seus filhos.
+    private void novaAltura(NoAVL no) {
+        if (no != null) {
+            no.altura = 1 + Math.max(altura(no.esquerdo), altura(no.direito));
+        }
+    }
+
+    // Calcula o Fator de Balanceamento (FB) de um nó.
     private int fatordeBalanceamento(NoAVL no) {
         if (no == null) {
             return 0;
-        } else {
-            return altura(no.esquerdo) - altura(no.direito);
+        }
+        return altura(no.esquerdo) - altura(no.direito);
+    }
+
+    /**
+     * Loop principal de rebalanceamento. Sobe do nó 'no' até a raiz,
+     * verificando e corrigindo o balanceamento de cada ancestral.
+     * * @param no Nó onde o rebalanceamento começa.
+     */
+    private void rebalancearParaCima(NoAVL no) {
+        NoAVL noAtual = no;
+
+        while (noAtual != null) {
+            // Armazena o pai ANTES de qualquer rotação,
+            // pois a rotação pode mudar 'noAtual.pai'
+            NoAVL pai = noAtual.pai;
+
+            // 1. Atualiza a altura do nó atual
+            novaAltura(noAtual);
+
+            // 2. Verifica o balanceamento e rotaciona se necessário
+            balancearNo(noAtual);
+
+            // 3. Sobe para o pai original
+            noAtual = pai;
         }
     }
 
-    private NoAVL balancearNo(NoAVL no) {
-        if (no == null) return null;
+    /**
+     * Verifica o Fator de Balanceamento de um ÚNICO nó e aplica as
+     * rotações necessárias (LL, RR, LR, RL).
+     * * Este método chama as rotações (void) da classe-pai e, em seguida,
+     * ATUALIZA AS ALTURAS dos nós envolvidos.
+     * * @param no O nó a ser verificado e balanceado.
+     */
+    private void balancearNo(NoAVL no) {
+        int fb = fatordeBalanceamento(no);
 
-        novaAltura(no); // atualiza a altura do nó
-        int fb = fatordeBalanceamento(no); // valcula o Fator de Balanceamento
-
-        // casos de rotação
-
-        // CASO LL
+        // CASO LL (Esquerda-Esquerda)
         if (fb > 1 && fatordeBalanceamento(no.esquerdo) >= 0) {
-            return rotacao_direita(no);
+            NoAVL x = no.esquerdo; // 'x' será o novo pai
+            rotacao_direita(no); // Chama rotação (void) da classe-pai
+
+            // Atualiza alturas (filho 'no' primeiro, depois novo pai 'x')
+            novaAltura(no);
+            novaAltura(x);
         }
 
-        // CASO LR
-        if (fb > 1 && fatordeBalanceamento(no.esquerdo) < 0) {
-            rotacao_esquerda(no.esquerdo);
-            // o balanceamento do pai é tratado pelan rotacao_direita(no)
-            // não precisa atualizar o pai aqui, pois será refeito na próxima rotação
-            return rotacao_direita(no);
+        // CASO RR (Direita-Direita)
+        else if (fb < -1 && fatordeBalanceamento(no.direito) <= 0) {
+            NoAVL y = no.direito; // 'y' será o novo pai
+            rotacao_esquerda(no); // Chama rotação (void) da classe-pai
+
+            // Atualiza alturas (filho 'no' primeiro, depois novo pai 'y')
+            novaAltura(no);
+            novaAltura(y);
         }
 
-        // CASO RR
-        if (fb < -1 && fatordeBalanceamento(no.direito) <= 0) {
-            return rotacao_esquerda(no);
+        // CASO LR (Esquerda-Direita)
+        else if (fb > 1 && fatordeBalanceamento(no.esquerdo) < 0) {
+            NoAVL y = no.esquerdo;
+            NoAVL z = y.direito;
+
+            rotacao_esquerda(y); // Rotação interna
+            novaAltura(y); // Atualiza y
+            novaAltura(z); // Atualiza z (novo pai de y)
+
+            rotacao_direita(no); // Rotação externa
+            novaAltura(no); // Atualiza no
+            novaAltura(z);  // Atualiza z (novo pai de no)
         }
 
-        // CASO RL
-        if (fb < -1 && fatordeBalanceamento(no.direito) > 0) {
-            no.direito = rotacao_direita(no.direito);
-            // o balanceamento do pai é tratado pelo rotacao_esquerda(no)
-            return rotacao_esquerda(no);
-        }
+        // CASO RL (Direita-Esquerda)
+        else if (fb < -1 && fatordeBalanceamento(no.direito) > 0) {
+            NoAVL y = no.direito;
+            NoAVL z = y.esquerdo;
 
-        return no; // Já balanceado
+            rotacao_direita(y); // Rotação interna
+            novaAltura(y); // Atualiza y
+            novaAltura(z); // Atualiza z (novo pai de y)
+
+            rotacao_esquerda(no); // Rotação externa
+            novaAltura(no); // Atualiza no
+            novaAltura(z);  // Atualiza z (novo pai de no)
+        }
     }
 
-    //Percorre do nó desbalanceado/modificado até a raiz, balanceando cada ancestral
-    //Retorna a nova raiz da sub-árvore que foi balanceada
-     
-    @Override
-    public NoAVL balancear(NoAVL no) {
-        NoAVL resultado = no; // começa com o próprio nó
-        NoAVL pai = no.pai;
-
-        // balanceia o nó atual (ponto de inserção/remoção) e sobe
-        resultado = balancearNo(no);
-
-        // se a rotação mudou o pai, atualiza 'no' para a nova sub-raiz
-        no = resultado;
-        pai = no.pai; // Atualiza o pai
-
-        while (pai != null) {
-            // no é a sub-raiz que acabou de ser balanceada
-
-            // corrige o ponteiro do pai para apontar para o nó rebalanceado 
-            if (pai.esquerdo == no) {
-                pai.esquerdo = balancearNo(pai);
-                no = pai.esquerdo;
-            } else { // if (pai.direito == no)
-                pai.direito = balancearNo(pai);
-                no = pai.direito;
-            }
-
-            // atualiza a raiz da árvore se uma rotação no nível da raiz ocorreu
-            if (no.pai == null && no != raiz) {
-                raiz = no;
-            }
-
-            pai = no.pai; // Sobe para o próximo pai
+    /**
+     * Encontra o nó com o menor valor na subárvore.
+     * (Método auxiliar para a remoção)
+     */
+    private NoAVL menorNo(NoAVL no) {
+        NoAVL atual = no;
+        while (atual != null && atual.esquerdo != null) {
+            atual = atual.esquerdo;
         }
-
-        // retorna a nova raiz da sub-árvore 
-        return resultado;
+        return atual;
     }
 }
+
